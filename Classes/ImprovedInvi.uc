@@ -165,7 +165,7 @@ auto state Pickup
 defaultproperties
 {
     bEnabled=True
-    InvisibilityDuration=27 // Set the default invisibility duration
+    InvisibilityDuration=27 // Set the default invisibility duration in seconds
     bShowCountdownMessage=True
     bAllowDrop=False
 }
