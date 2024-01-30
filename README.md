@@ -2,8 +2,9 @@ ImprovedInvi is an Unreal Tournament 1999 mutator that adds additional features 
 
 Features:
 1) Customize the duration of Invisibility
-2) Add a timer and audio cue for when Invisibility is about to expire, similar to what Damage Amplifier has
-3) Has the option to enable Drop Invisibility on death and allow other players to pick it up
+2) Adds an audio cue for when Invisibility is about to expire, similar to what Damage Amplifier has
+3) Has the option to enable a Countdown message for the last 5 seconds when Invisibility is about to expire 
+4) Has an option to enable Drop Invisibility on death and allow other players to pick it up
 
 Server-side installation:
 - Loaded the ImprovedInvi package
@@ -16,7 +17,7 @@ Default settings for ImprovedInvi.ini:
 [ImprovedInvi.ImprovedInvi]
 bEnabled=True
 InvisibilityDuration=27
-bShowCountdownMessage=False
+bShowCountdownMessage=True
 bAllowDrop=False
 ```
 
