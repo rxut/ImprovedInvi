@@ -167,5 +167,5 @@ defaultproperties
     bEnabled=True
     InvisibilityDuration=27 // Set the default invisibility duration
     bShowCountdownMessage=True
-    bAllowDrop=True
+    bAllowDrop=False
 }
