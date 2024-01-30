@@ -16,7 +16,8 @@ Default settings for ImprovedInvi.ini:
 [ImprovedInvi.ImprovedInvi]
 bEnabled=True
 InvisibilityDuration=27
-bAllowDrop=True
+bShowCountdownMessage=False
+bAllowDrop=False
 ```
 
 A Drop Invi part of this mutator contains code from the North American UTPure branch.
