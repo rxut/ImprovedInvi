@@ -6,6 +6,7 @@ var config bool bEnabled;
 var config bool bShowCountdownMessage;
 var int lastSecondDisplayed;
 var int currentSecond;
+var int TeamNum;
 
 event PostBeginPlay()
 {
@@ -77,62 +78,93 @@ function DropFrom(vector StartLocation)
 
 state Activated
 {
-    function endstate()
+    function AddShieldBeltEffect()
     {
         local Inventory S;
 
-        bActive = false;        
+        S = Pawn(Owner).FindInventoryType(class'ImprovedShieldBelt');
+
+        if ( (S != None) && ImprovedShieldBelt(S).MyEffect.bHidden == true)
+        {   
+            ImprovedShieldBelt(S).MyEffect = Spawn(class'UT_ShieldBeltEffect', Owner,,Owner.Location, Owner.Rotation);
+            ImprovedShieldBelt(S).MyEffect.Mesh = Owner.Mesh;
+            ImprovedShieldBelt(S).MyEffect.DrawScale = Owner.Drawscale;
+            ImprovedShieldBelt(S).SetEffectTexture();
+            ImprovedShieldBelt(S).MyEffect.bHidden = False;
+        }
+    }
+
+    function RemoveShieldBeltEffect()
+    {
+        local Inventory S;
+
+        S = Pawn(Owner).FindInventoryType(class'ImprovedShieldBelt');
+
+        if ( (S != None) && (ImprovedShieldBelt(S).MyEffect != None))
+        {
+            ImprovedShieldBelt(S).MyEffect.bHidden = true;
+            ImprovedShieldBelt(S).MyEffect.Destroy();
+        }
+        
+    }
+
+    function endstate()
+    {   
+        bActive = false;
+        
         PlaySound(DeActivateSound);
 
         Owner.SetDefaultDisplayProperties();
+
         Pawn(Owner).Visibility = Pawn(Owner).default.Visibility;
-        S = Pawn(Owner).FindInventoryType(class'UT_ShieldBelt');
-        if ( (S != None) && (UT_Shieldbelt(S).MyEffect != None) )
-            UT_Shieldbelt(S).MyEffect.bHidden = false;
+
+        AddShieldBeltEffect();
     }
 
     function BeginState()
     {
-    local Inventory S;
+        RemoveShieldBeltEffect();
 
-    bActive = true;
-    PlaySound(ActivateSound,,4.0);
+        bActive = true;
 
-    Owner.SetDisplayProperties(ERenderStyle.STY_Translucent, 
+        PlaySound(ActivateSound,,4.0);
+
+        Owner.SetDisplayProperties(ERenderStyle.STY_Translucent, 
                                FireTexture'unrealshare.Belt_fx.Invis',
                                false,
                                true);
         SetTimer(Level.TimeDilation, True);
-        S = Pawn(Owner).FindInventoryType(class'UT_ShieldBelt');
-        if ( (S != None) && (UT_Shieldbelt(S).MyEffect != None) )
-        UT_Shieldbelt(S).MyEffect.bHidden = true;
     }
-
 
     function Timer()
     {
+        local PlayerPawn PP;
         Charge -= 1;
- 
         currentSecond = Charge;
 
         if (currentSecond <= 5 && currentSecond > 0 && currentSecond != lastSecondDisplayed)
-    {
-        lastSecondDisplayed = currentSecond;
-        if (Pawn(Owner) != None)
         {
-            if (bShowCountdownMessage)
+            lastSecondDisplayed = currentSecond;
+
+            if (Pawn(Owner) != None)
             {
-                Pawn(Owner).ClientMessage("Your Invisibility will expire in " $ currentSecond $ " seconds.");
+                PP = PlayerPawn(Owner);
+
+                    if (bShowCountdownMessage)
+                    {
+                        Pawn(Owner).ClientMessage("Your Invisibility will expire in " $ currentSecond $ " seconds.");
+                    }
+                
+                PP.ClientPlaySound(Sound'UnrealI.Generic.Teleport2',,true);
             }
-            
-            Pawn(Owner).PlaySound(Sound'UnrealI.Generic.Teleport2',,1.0);
         }
-            }
-            else if (currentSecond == 0)
+        else if (currentSecond == 0)
             {
+                PP = PlayerPawn(Owner);
+
                 if (Pawn(Owner) != None)
                 {
-                    Pawn(Owner).PlaySound(Sound'LadderSounds.LadderSounds.lcursorMove',,16.0);
+                    PP.ClientPlaySound(Sound'LadderSounds.LadderSounds.lcursorMove',,true);
                 }
             }
 
@@ -149,7 +181,7 @@ auto state Pickup
 {
     simulated function Landed(Vector HitNormal)
     {
-    SetTimer(Level.TimeDilation, True);
+        SetTimer(Level.TimeDilation, True);
     }
 
    function Timer()
@@ -165,7 +197,7 @@ auto state Pickup
 defaultproperties
 {
     bEnabled=True
-    InvisibilityDuration=27 // Set the default invisibility duration in seconds
+    InvisibilityDuration=27 // Set the default invisibility duration
     bShowCountdownMessage=True
     bAllowDrop=False
 }

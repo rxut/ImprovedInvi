@@ -9,9 +9,22 @@ function PostBeginPlay()
 {
     local UT_Invisibility UT_InvisibilityItem;
     local ImprovedInvi NewUT_Invisibility;
+    
+    local UT_ShieldBelt shieldBelt;
+    local ImprovedShieldBelt newShieldBelt;
 
     if (bEnabled)
-    {
+    {   
+        foreach AllActors(class'UT_ShieldBelt', shieldBelt)
+        {
+            if (!shieldBelt.IsA('ImprovedShieldBelt'))
+            {
+                newShieldBelt = Spawn(class'ImprovedShieldBelt', None,, shieldBelt.Location, shieldBelt.Rotation);
+                newShieldBelt.SetBase(shieldBelt.Base);
+                shieldBelt.Destroy();
+            }
+        }
+
         foreach AllActors(class'UT_Invisibility', UT_InvisibilityItem)
         {
             if (!UT_InvisibilityItem.IsA('ImprovedInvi'))
@@ -24,7 +37,6 @@ function PostBeginPlay()
     }
 
     Super.PostBeginPlay();
-
 }
 
 defaultproperties
